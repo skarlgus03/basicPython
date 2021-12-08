@@ -1,4 +1,4 @@
-
+import pickle
 
 
 def add_item(item, amount, t_inventory):
@@ -22,20 +22,17 @@ def remove_item(item,t_inventory):
 
 # 새로운 함수 포션 사용
 # 존재하는 아이템을 수량 1 빼기
-def consume_item(item):
-    if check_item(item):
-        if inventory[item] == 0:
-            print("아이템의 수량이 부족합니다.")
+def consume_item(item, t_inventory):
+    if check_item(item,t_inventory):
+        if t_inventory[item]<=0:
+            print("현재 아이템의 수량이 적어서 사용할 수 없습니다.")
         else:
-            inventory[item] -= 1
-            print(item+"를 하나 사용했습니다.")
-            print("남은수량 : "+str(inventory[item]))
-    
+            t_inventory[item] -= 1
+            print(item+"의 수량은 "+str(t_inventory[item])+"입니다")
     else:
-        print(item+"을 가지고 있지 않습니다.")
+        print(item +"이 존재하지 않습니다.")
 
 def check_item(item,t_inventory):
-         
     return item in t_inventory
 
 def print_menu():
@@ -46,7 +43,7 @@ def print_menu():
     print("4. 아이템 사용")
 
 
-def use_item():
+def use_item(t_inventory):
     while True:
         print_menu()
         option = int(input("메뉴를 번호를 입력하세요)"))
@@ -64,13 +61,18 @@ def use_item():
             print(inventory)
         elif option == 4:
             use_item = input("사용할 아이템을 입력하세요.")
-            consume_item(use_item)
+            consume_item(c_item, inventory)
         else:
             print("잘못된 번호를 입력하셨습니다.")
 
-
-
-character = {}
+try:
+    load_file = open("game_save.p","rb")
+    character = pickle.load(load_file)
+    load_file.close()
+    print("저장된 파일을 읽어왔습니다.")
+except:
+    print("읽어올 파일이 없습니다.")
+    character = {}
 select_character = None
 def new_character(name, t_character):
     if check_character(name, t_character):
@@ -96,6 +98,10 @@ while True:
     print_characterMenu()
     option = int(input("메뉴를 선택해주세요.)"))
     if option == 0:
+        save_file = open("game_save.p","wb")
+        pickle.dump(character, save_file)
+        save_file.close()
+        print("게임 내용이 저장되었습니다.")
         print("종료되었습니다.")
         break
     elif option == 1:
@@ -115,6 +121,13 @@ while True:
             print(select_character + "이 선택되었습니다.")
         else:
             print(temp_name+"은 존재하지않는 캐릭터입니다.")
+    elif option == 4:
+        if select_character == None:
+            print("3번 메뉴로 캐릭터를 선택해주세요.")
+        else:
+            print("선택된 캐릭터는 "+select_character +" 입니다")
+            inventory = character[select_character]
+            use_item(inventory)
 
 
 

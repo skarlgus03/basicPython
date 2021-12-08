@@ -1,0 +1,95 @@
+[1mdiff --git a/main.py b/main.py[m
+[1mindex e267e65..ec059cd 100644[m
+[1m--- a/main.py[m
+[1m+++ b/main.py[m
+[36m@@ -1,4 +1,4 @@[m
+[31m-[m
+[32m+[m[32mimport pickle[m
+ [m
+ [m
+ def add_item(item, amount, t_inventory):[m
+[36m@@ -22,20 +22,17 @@[m [mdef remove_item(item,t_inventory):[m
+ [m
+ # 새로운 함수 포션 사용[m
+ # 존재하는 아이템을 수량 1 빼기[m
+[31m-def consume_item(item):[m
+[31m-    if check_item(item):[m
+[31m-        if inventory[item] == 0:[m
+[31m-            print("아이템의 수량이 부족합니다.")[m
+[32m+[m[32mdef consume_item(item, t_inventory):[m
+[32m+[m[32m    if check_item(item,t_inventory):[m
+[32m+[m[32m        if t_inventory[item]<=0:[m
+[32m+[m[32m            print("현재 아이템의 수량이 적어서 사용할 수 없습니다.")[m
+         else:[m
+[31m-            inventory[item] -= 1[m
+[31m-            print(item+"를 하나 사용했습니다.")[m
+[31m-            print("남은수량 : "+str(inventory[item]))[m
+[31m-    [m
+[32m+[m[32m            t_inventory[item] -= 1[m
+[32m+[m[32m            print(item+"의 수량은 "+str(t_inventory[item])+"입니다")[m
+     else:[m
+[31m-        print(item+"을 가지고 있지 않습니다.")[m
+[32m+[m[32m        print(item +"이 존재하지 않습니다.")[m
+ [m
+ def check_item(item,t_inventory):[m
+[31m-         [m
+     return item in t_inventory[m
+ [m
+ def print_menu():[m
+[36m@@ -46,7 +43,7 @@[m [mdef print_menu():[m
+     print("4. 아이템 사용")[m
+ [m
+ [m
+[31m-def use_item():[m
+[32m+[m[32mdef use_item(t_inventory):[m
+     while True:[m
+         print_menu()[m
+         option = int(input("메뉴를 번호를 입력하세요)"))[m
+[36m@@ -64,13 +61,18 @@[m [mdef use_item():[m
+             print(inventory)[m
+         elif option == 4:[m
+             use_item = input("사용할 아이템을 입력하세요.")[m
+[31m-            consume_item(use_item)[m
+[32m+[m[32m            consume_item(c_item, inventory)[m
+         else:[m
+             print("잘못된 번호를 입력하셨습니다.")[m
+ [m
+[31m-[m
+[31m-[m
+[31m-character = {}[m
+[32m+[m[32mtry:[m
+[32m+[m[32m    load_file = open("game_save.p","rb")[m
+[32m+[m[32m    character = pickle.load(load_file)[m
+[32m+[m[32m    load_file.close()[m
+[32m+[m[32m    print("저장된 파일을 읽어왔습니다.")[m
+[32m+[m[32mexcept:[m
+[32m+[m[32m    print("읽어올 파일이 없습니다.")[m
+[32m+[m[32m    character = {}[m
+ select_character = None[m
+ def new_character(name, t_character):[m
+     if check_character(name, t_character):[m
+[36m@@ -96,6 +98,10 @@[m [mwhile True:[m
+     print_characterMenu()[m
+     option = int(input("메뉴를 선택해주세요.)"))[m
+     if option == 0:[m
+[32m+[m[32m        save_file = open("game_save.p","wb")[m
+[32m+[m[32m        pickle.dump(character, save_file)[m
+[32m+[m[32m        save_file.close()[m
+[32m+[m[32m        print("게임 내용이 저장되었습니다.")[m
+         print("종료되었습니다.")[m
+         break[m
+     elif option == 1:[m
+[36m@@ -115,6 +121,13 @@[m [mwhile True:[m
+             print(select_character + "이 선택되었습니다.")[m
+         else:[m
+             print(temp_name+"은 존재하지않는 캐릭터입니다.")[m
+[32m+[m[32m    elif option == 4:[m
+[32m+[m[32m        if select_character == None:[m
+[32m+[m[32m            print("3번 메뉴로 캐릭터를 선택해주세요.")[m
+[32m+[m[32m        else:[m
+[32m+[m[32m            print("선택된 캐릭터는 "+select_character +" 입니다")[m
+[32m+[m[32m            inventory = character[select_character][m
+[32m+[m[32m            use_item(inventory)[m
+ [m
+ [m
+ [m
